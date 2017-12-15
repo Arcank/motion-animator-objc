@@ -97,7 +97,7 @@ The MotionAnimator provides a more consistent implicit animation API with a well
 
 The following charts describe when changing a property on a given object will cause an implicit animation to be generated.
 
-| `UIView`               | inside animation block | outside animation block | inside MotionAnimator animation block |
+| UIView.                | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-----------------------|:-----------------------|:------------------------|:--------------------------------------|
 | `alpha`                | ✓                      |                         | ✓                                     |
 | `backgroundColor`      | ✓                      |                         | ✓                                     |
@@ -132,7 +132,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 ---
 
-| Backing `CAlayer`              | inside animation block | outside animation block | inside MotionAnimator animation block |
+| Backing CALayer                | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
 | `anchorPoint`                  | ✓                      |                         | ✓                                     |
 | `backgroundColor`              |                        |                         | ✓                                     |
@@ -178,7 +178,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 ---
 
-| Unflushed standalone `CAlayer` | inside animation block | outside animation block | inside MotionAnimator animation block |
+| Unflushed standalone CALayer   | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
 | `anchorPoint`                  |                        |                         | ✓                                     |
 | `backgroundColor`              |                        |                         | ✓                                     |
@@ -224,7 +224,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 ---
 
-| Flushed standalone `CAlayer`   | inside animation block | outside animation block | inside MotionAnimator animation block |
+| Flushed standalone CALayer     | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
 | `anchorPoint`                  | ✓                      | ✓                       | ✓                                     |
 | `backgroundColor`              |                        |                         | ✓                                     |
