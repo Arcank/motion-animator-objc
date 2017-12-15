@@ -7,6 +7,15 @@
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/MotionAnimator.svg)](https://cocoapods.org/pods/MotionAnimator)
 [![Platform](https://img.shields.io/cocoapods/p/MotionAnimator.svg)](http://cocoadocs.org/docsets/MotionAnimator)
 
+<table>
+  <tr>
+    <td>Core Animation-backed animator</td>
+    <td>Can animate more properties than UIKit</td>
+    <td>Explicit animations are additive by default, unlike CABasicAnimation and friends</td>
+    <td>Supports iOS 8 and up</td>
+  </tr>
+</table>
+
 ## Background on iOS animation systems
 
 Animation systems on iOS can be split in to two general categories: main thread-based and render server-based.
@@ -106,15 +115,15 @@ let view = UIView()
 
 // inside animation block
 UIView.animate(withDuration: 0.8, animations: {
-  view.alpha = 0.5
+  view.alpha = 0.5 // Will generate an animation with a duration of 0.8
 })
 
 // outside animation block
-view.alpha = 0.5
+view.alpha = 0.5 // Will not animate
 
 // inside MotionAnimator animation block
 MotionAnimator.animate(withDuration: 0.8, animations: {
-  view.alpha = 0.5
+  view.alpha = 0.5 // Will generate an animation with a duration of 0.8
 })
 ```
 
@@ -141,15 +150,15 @@ let view = UIView()
 
 // inside animation block
 UIView.animate(withDuration: 0.8, animations: {
-  view.layer.opacity = 0.5 // Note: will animate with the CATransaction duration of 0.25 rather than 0.8.
+  view.layer.opacity = 0.5 // Will generate an animation with a duration of 0.8
 })
 
 // outside animation block
-view.layer.opacity = 0.5
+view.layer.opacity = 0.5 // Will not animate
 
 // inside MotionAnimator animation block
 MotionAnimator.animate(withDuration: 0.8, animations: {
-  view.layer.opacity = 0.5 // Note: will animate with the provided duration of 0.8
+  view.layer.opacity = 0.5 // Will generate an animation with a duration of 0.8
 })
 ```
 
@@ -187,15 +196,15 @@ let layer = CALayer()
 
 // inside animation block
 UIView.animate(withDuration: 0.8, animations: {
-  layer.opacity = 0.5
+  layer.opacity = 0.5 // Will not animate
 })
 
 // outside animation block
-layer.opacity = 0.5
+layer.opacity = 0.5 // Will not animate
 
 // inside MotionAnimator animation block
 MotionAnimator.animate(withDuration: 0.8, animations: {
-  layer.opacity = 0.5
+  layer.opacity = 0.5 // Will generate an animation with a duration of 0.8
 })
 ```
 
@@ -235,15 +244,23 @@ CATransaction.flush()
 
 // inside animation block
 UIView.animate(withDuration: 0.8, animations: {
-  layer.opacity = 0.5 // Note: will animate with the CATransaction duration of 0.25 rather than 0.8.
+  // Will generate an animation with a duration of 0.25
+  // This is because it uses the CATransaction duration rather than the UIKit duration.
+  layer.opacity = 0.5
 })
 
 // outside animation block
+// Will generate an animation with a duration of 0.25
+// This is because it uses the CATransaction duration rather than the UIKit duration.
 layer.opacity = 0.5
 
 // inside MotionAnimator animation block
 MotionAnimator.animate(withDuration: 0.8, animations: {
-  layer.opacity = 0.5 // Note: will animate with the provided duration of 0.8
+  layer.opacity = 0.5 // Will generate an animation with a duration of 0.8
+})
+
+MotionAnimator.animate(withDuration: 0.8, animations: {
+  layer.opacity = 0.5
 })
 ```
 
