@@ -101,22 +101,6 @@ The following charts describe when changing a property on a given object will ca
 
 #### UIView
 
-| Key Path               | inside animation block | outside animation block | inside MotionAnimator animation block |
-|:-----------------------|:-----------------------|:------------------------|:--------------------------------------|
-| `alpha`                | ✓                      |                         | ✓                                     |
-| `backgroundColor`      | ✓                      |                         | ✓                                     |
-| `bounds`               | ✓                      |                         | ✓                                     |
-| `bounds.size.height`   | ✓                      |                         | ✓                                     |
-| `bounds.size.width`    | ✓                      |                         | ✓                                     |
-| `center`               | ✓                      |                         | ✓                                     |
-| `center.x`             | ✓                      |                         | ✓                                     |
-| `center.y`             | ✓                      |                         | ✓                                     |
-| `transform`            | ✓                      |                         | ✓                                     |
-| `transform.rotation.z` | ✓                      |                         | ✓                                     |
-| `transform.scale`      | ✓                      |                         | ✓                                     |
-
-Example code:
-
 ```swift
 let view = UIView()
 
@@ -134,7 +118,38 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 })
 ```
 
+| Key Path               | inside animation block | outside animation block | inside MotionAnimator animation block |
+|:-----------------------|:-----------------------|:------------------------|:--------------------------------------|
+| `alpha`                | ✓                      |                         | ✓                                     |
+| `backgroundColor`      | ✓                      |                         | ✓                                     |
+| `bounds`               | ✓                      |                         | ✓                                     |
+| `bounds.size.height`   | ✓                      |                         | ✓                                     |
+| `bounds.size.width`    | ✓                      |                         | ✓                                     |
+| `center`               | ✓                      |                         | ✓                                     |
+| `center.x`             | ✓                      |                         | ✓                                     |
+| `center.y`             | ✓                      |                         | ✓                                     |
+| `transform`            | ✓                      |                         | ✓                                     |
+| `transform.rotation.z` | ✓                      |                         | ✓                                     |
+| `transform.scale`      | ✓                      |                         | ✓                                     |
+
 #### Backing CALayer
+
+```swift
+let view = UIView()
+
+// inside animation block
+UIView.animate(withDuration: 0.8, animations: {
+  view.layer.opacity = 0.5 // Note: will animate with the CATransaction duration of 0.25 rather than 0.8.
+})
+
+// outside animation block
+view.layer.opacity = 0.5
+
+// inside MotionAnimator animation block
+MotionAnimator.animate(withDuration: 0.8, animations: {
+  view.layer.opacity = 0.5 // Note: will animate with the provided duration of 0.8
+})
+```
 
 | Key Path                       | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
@@ -161,26 +176,24 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 | `position.y`                   | ✓                      |                         | ✓                                     |
 | `zPosition`                    |                        |                         | ✓                                     |
 
-Example code:
+#### Unflushed standalone CALayer
 
 ```swift
-let view = UIView()
+let layer = CALayer()
 
 // inside animation block
 UIView.animate(withDuration: 0.8, animations: {
-  view.layer.opacity = 0.5 // Note: will animate with the CATransaction duration of 0.25 rather than 0.8.
+  layer.opacity = 0.5
 })
 
 // outside animation block
-view.layer.opacity = 0.5
+layer.opacity = 0.5
 
 // inside MotionAnimator animation block
 MotionAnimator.animate(withDuration: 0.8, animations: {
-  view.layer.opacity = 0.5 // Note: will animate with the provided duration of 0.8
+  layer.opacity = 0.5
 })
 ```
-
-#### Unflushed standalone CALayer
 
 | Key path                       | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
@@ -207,14 +220,18 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 | `position.y`                   |                        |                         | ✓                                     |
 | `zPosition`                    |                        |                         | ✓                                     |
 
-Example code:
+#### Flushed standalone CALayer
 
 ```swift
 let layer = CALayer()
 
+// It's usually unnecessary to flush the transaction, unless you want to be able to implicitly
+// animate it without using a MotionAnimator.
+CATransaction.flush()
+
 // inside animation block
 UIView.animate(withDuration: 0.8, animations: {
-  layer.opacity = 0.5
+  layer.opacity = 0.5 // Note: will animate with the CATransaction duration of 0.25 rather than 0.8.
 })
 
 // outside animation block
@@ -222,11 +239,9 @@ layer.opacity = 0.5
 
 // inside MotionAnimator animation block
 MotionAnimator.animate(withDuration: 0.8, animations: {
-  layer.opacity = 0.5
+  layer.opacity = 0.5 // Note: will animate with the provided duration of 0.8
 })
 ```
-
-#### Flushed standalone CALayer
 
 | Key path                       | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
@@ -252,29 +267,6 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 | `position.x`                   | ✓                      | ✓                       | ✓                                     |
 | `position.y`                   | ✓                      | ✓                       | ✓                                     |
 | `zPosition`                    | ✓                      | ✓                       | ✓                                     |
-
-Example code:
-
-```swift
-let layer = CALayer()
-
-// It's usually unnecessary to flush the transaction, unless you want to be able to implicitly
-// animate it without using a MotionAnimator.
-CATransaction.flush()
-
-// inside animation block
-UIView.animate(withDuration: 0.8, animations: {
-  layer.opacity = 0.5 // Note: will animate with the CATransaction duration of 0.25 rather than 0.8.
-})
-
-// outside animation block
-layer.opacity = 0.5
-
-// inside MotionAnimator animation block
-MotionAnimator.animate(withDuration: 0.8, animations: {
-  layer.opacity = 0.5 // Note: will animate with the provided duration of 0.8
-})
-```
 
 ## WWDC material on Core Animation
 
