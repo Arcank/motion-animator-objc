@@ -29,48 +29,71 @@ Not every UIView or CALayer property is animatable by Core Animation. To complic
 For example, try to guess which of the following snippets will generate an animation and what the generated animation's duration will be:
 
 ```swift
-// Snippet #1:
 let view = UIView()
 UIView.animate(withDuration: 0.8, animations: {
   view.alpha = 0.5
 })
 ```
 
+<details>
+  <summary>Click to see the answer</summary>
+  Generates an animation with duration of 0.8.
+</details>
+
 ```swift
-// Snippet #2:
 let view = UIView()
 UIView.animate(withDuration: 0.8, animations: {
   view.layer.alpha = 0.5
 })
 ```
 
+<details>
+  <summary>Click to see the answer</summary>
+  Generates an animation with duration of 0.8.
+</details>
+
 ```swift
-// Snippet #3:
 let view = UIView()
 view.alpha = 0.5
 ```
 
+<details>
+  <summary>Click to see the answer</summary>
+  Does not generate an animation.
+</details>
+
 ```swift
-// Snippet #4:
 let view = UIView()
 view.layer.alpha = 0.5
 ```
 
+<details>
+  <summary>Click to see the answer</summary>
+  Does not generate an animation.
+</details>
+
 ```swift
-// Snippet #5:
 let layer = CALayer()
 layer.alpha = 0.5
 ```
 
+<details>
+  <summary>Click to see the answer</summary>
+  Does not generate an animation.
+</details>
+
 ```swift
-// Snippet #6:
 let layer = CALayer()
 CATransaction.flush()
 layer.alpha = 0.5
 ```
 
+<details>
+  <summary>Click to see the answer</summary>
+  Generates an animation with duration of 0.25.
+</details>
+
 ```swift
-// Snippet #7:
 let layer = CALayer()
 CATransaction.flush()
 UIView.animate(withDuration: 0.8, animations: {
@@ -79,15 +102,8 @@ UIView.animate(withDuration: 0.8, animations: {
 ```
 
 <details>
- <summary>Click to see the answers</summary>
-
-1. Generates an animation with duration of 0.8.
-2. Generates an animation with duration of 0.8.
-3. Does not generate an animation.
-4. Does not generate an animation.
-5. Does not generate an animation.
-6. Generates an animation with duration of 0.25.
-7. Generates an animation with duration of 0.25.
+  <summary>Click to see the answer</summary>
+  Generates an animation with duration of 0.25.
 </details>
 
 ### What properties can I explicitly animate?
