@@ -7,15 +7,6 @@
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/MotionAnimator.svg)](https://cocoapods.org/pods/MotionAnimator)
 [![Platform](https://img.shields.io/cocoapods/p/MotionAnimator.svg)](http://cocoadocs.org/docsets/MotionAnimator)
 
-<table>
-  <tr>
-    <td>Core Animation-backed animator</td>
-    <td>Can animate more properties than UIKit</td>
-    <td>Explicit animations are additive by default, unlike CABasicAnimation and friends</td>
-    <td>Supports iOS 8 and up</td>
-  </tr>
-</table>
-
 ## Background on iOS animation systems
 
 Animation systems on iOS can be split in to two general categories: main thread-based and render server-based.
