@@ -48,9 +48,11 @@ animation.fromValue = 0
 animation.toValue = 10
 animation.duration = 0.5
 view.layer.add(animation, forKey: animation.keyPath)
+```
 
-// ^ is equivalent to:
+The above code is equivalent to the following:
 
+```swift
 let animator = MotionAnimator()
 let traits = MDMAnimationTraits(duration: 0.5)
 animator.animate(with: traits,
