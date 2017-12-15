@@ -178,6 +178,8 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 #### Unflushed standalone CALayer
 
+CALayers are unflushed until the next `CATransaction.flush()` invocation, which can happen either directly or at the end of the current run loop.
+
 ```swift
 let layer = CALayer()
 
