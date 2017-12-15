@@ -74,10 +74,10 @@ UIKit and Core Animation have different rules about when and how a property can 
 
 UIView properties generate implicit animations **only** when they are changed within an `animateWithDuration:` animation block.
 
-CALayer properties generate implicit animations **only** when they are changed under the following conditions:
+CALayer properties generate implicit animations **only** when they are changed under either of the following conditions:
 
-1. The CALayer is backing a UIView, the property is a supported UIKit animatable property (this is not documented anywhere), and the properties are being changed within an `animateWithDuration:` block.
-2. The CALayer is **not** backing a UIView (a "standalone layer"), the layer has been around for at least one CATransaction flush (either by invoking `CATransaction.flush()` or because the run loop turned), and the property is changed.
+1. the CALayer is backing a UIView, the property is a supported UIKit animatable property (this is not documented anywhere), and the properties are being changed within an `animateWithDuration:` block, or
+2. the CALayer is **not** backing a UIView (a "standalone layer"), the layer has been around for at least one CATransaction flush (either by invoking `CATransaction.flush()` or because the run loop turned), and the property is changed.
 
 This behavior can be somewhat difficult to reason through, most notably when trying to animate CALayer properties using the UIView `animateWithDuration:` APIs. For example, CALayer's cornerRadius was not animatable using `animateWithDuration:` up until iOS 11, but MotionAnimator supports imlicitly animating this property back to iOS 8.
 
