@@ -130,8 +130,6 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 })
 ```
 
----
-
 | Backing CALayer                | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
 | `anchorPoint`                  | ✓                      |                         | ✓                                     |
@@ -176,8 +174,6 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 })
 ```
 
----
-
 | Unflushed standalone CALayer   | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
 | `anchorPoint`                  |                        |                         | ✓                                     |
@@ -221,8 +217,6 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
   layer.opacity = 0.5
 })
 ```
-
----
 
 | Flushed standalone CALayer     | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
