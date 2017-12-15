@@ -66,6 +66,8 @@ view.alpha = 0.5
   Does not generate an animation.
 </details>
 
+---
+
 ```swift
 let view = UIView()
 view.layer.alpha = 0.5
@@ -76,6 +78,8 @@ view.layer.alpha = 0.5
   Does not generate an animation.
 </details>
 
+---
+
 ```swift
 let layer = CALayer()
 layer.alpha = 0.5
@@ -85,6 +89,8 @@ layer.alpha = 0.5
   <summary>Click to see the answer</summary>
   Does not generate an animation.
 </details>
+
+---
 
 ```swift
 let layer = CALayer()
@@ -97,6 +103,8 @@ layer.alpha = 0.5
   <summary>Click to see the answer</summary>
   Generates an animation with duration of 0.25.
 </details>
+
+---
 
 ```swift
 let layer = CALayer()
