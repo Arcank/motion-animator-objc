@@ -13,9 +13,9 @@ Animation systems on iOS can be split in to two general categories: main thread-
 
 Main thread-based animation systems include UIDynamics, Facebook's [POP](https://github.com/facebook/pop), or anything driven by a CADisplayLink. These animation systems tend to require that you offload as much processing time as possible to background threads, otherwise your animations may stutter; i.e. "*main thread jank*".
 
-There is only one render server-based animation system: Core Animation. The *render server* is an operating system-wide dedicated process for performing animations on iOS. Because it lives outside of any app's main thread, the render server is never subject to main thread jank.
+There is one render server-based animation system: Core Animation. The *render server* is an operating system-wide process for animations on iOS. Because it's independent of any app's main thread, the render server is never subject to main thread jank.
 
-When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may as well reap the benefits of offloading animations from your app's main thread.
+When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may be able to offload the animations from your app's main thread.
 
 ## The MotionAnimator as a generalized render server animation API
 
