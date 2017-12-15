@@ -84,6 +84,7 @@ layer.alpha = 0.5
 
 ```swift
 let layer = CALayer()
+window.layer.addSublayer(layer)
 CATransaction.flush()
 layer.alpha = 0.5
 ```
@@ -95,6 +96,7 @@ layer.alpha = 0.5
 
 ```swift
 let layer = CALayer()
+window.layer.addSublayer(layer)
 CATransaction.flush()
 UIView.animate(withDuration: 0.8, animations: {
   layer.alpha = 0.5
