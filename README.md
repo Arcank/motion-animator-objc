@@ -17,22 +17,78 @@ There is one render server-based animation system: Core Animation. The *render s
 
 When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may be able to offload the animations from your app's main thread.
 
-## The MotionAnimator as a generalized render server animation API
+## Implicit vs explicit animations
 
-There are two primary ways to add animations to the render server: **explicitly**, with the CALayer `addAnimation:forKey:` APIs; and **implicitly**, with the UIView `animateWithDuration:` APIs and by setting properties on standalone CALayer instances. There are a large number of differences between these two APIs and understanding their relative merits is an important part of harnessing iOS' render server.
+There are two primary ways to animate on iOS:
 
-The differences can be grouped into answers to the following questions:
+1. **explicitly**, with the CALayer `addAnimation:forKey:` APIs; and
+2. **implicitly**, with the UIView `animateWithDuration:` APIs or by setting properties on standalone CALayer instances.
 
-1. What properties can I explicitly animate?
-2. What properties can I implicitly animate?
-3. Are animations additive by default? In other words, can animations change their destination mid-way through the animation while still preserving momentum?
+Not every UIView or CALayer property is animatable by Core Animation. To complicate matters even further: whether a property is animatable or not depends on the context within which it's being animated.
 
-We'll answer each of these questions using a chart that compares the four different mechanisms for animating views and layers on iOS:
+For example, try to guess which of the following snippets will generate an animation and what the generated animation's duration will be:
 
-1. CALayer explicit `addAnimation:forKey:`
-2. UIView implicit `animateWithDuration:`
-3. CALayer implicit `layer.<property> = <someNewValue>`
-4. MotionAnimator
+```swift
+// Snippet #1:
+let view = UIView()
+UIView.animate(withDuration: 0.8, animations: {
+  view.alpha = 0.5
+})
+```
+
+```swift
+// Snippet #2:
+let view = UIView()
+UIView.animate(withDuration: 0.8, animations: {
+  view.layer.alpha = 0.5
+})
+```
+
+```swift
+// Snippet #3:
+let view = UIView()
+view.alpha = 0.5
+```
+
+```swift
+// Snippet #4:
+let view = UIView()
+view.layer.alpha = 0.5
+```
+
+```swift
+// Snippet #5:
+let layer = CALayer()
+layer.alpha = 0.5
+```
+
+```swift
+// Snippet #6:
+let layer = CALayer()
+CATransaction.flush()
+layer.alpha = 0.5
+```
+
+```swift
+// Snippet #7:
+let layer = CALayer()
+CATransaction.flush()
+UIView.animate(withDuration: 0.8, animations: {
+  layer.alpha = 0.5
+})
+```
+
+<details>
+ <summary>Click to see the answers</summary>
+
+1. Generates an animation with duration of 0.8.
+2. Generates an animation with duration of 0.8.
+3. Does not generate an animation.
+4. Does not generate an animation.
+5. Does not generate an animation.
+6. Generates an animation with duration of 0.25.
+7. Generates an animation with duration of 0.25.
+</details>
 
 ### What properties can I explicitly animate?
 
