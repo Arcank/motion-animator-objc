@@ -117,7 +117,7 @@ The following charts describe when changing a property on a given object will ca
 
 Example code:
 
-```
+```swift
 let view = UIView()
 
 // inside animation block
@@ -163,7 +163,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 Example code:
 
-```
+```swift
 let view = UIView()
 
 // inside animation block
@@ -209,7 +209,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 Example code:
 
-```
+```swift
 let layer = CALayer()
 
 // inside animation block
@@ -255,7 +255,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 Example code:
 
-```
+```swift
 let layer = CALayer()
 
 // It's usually unnecessary to flush the transaction, unless you want to be able to implicitly
