@@ -45,7 +45,7 @@ UIView.animate(withDuration: 0.8, animations: {
 ```swift
 let view = UIView()
 UIView.animate(withDuration: 0.8, animations: {
-  view.layer.alpha = 0.5
+  view.layer.opacity = 0.5
 })
 ```
 
@@ -70,7 +70,7 @@ view.alpha = 0.5
 
 ```swift
 let view = UIView()
-view.layer.alpha = 0.5
+view.layer.opacity = 0.5
 ```
 
 <details>
@@ -82,7 +82,7 @@ view.layer.alpha = 0.5
 
 ```swift
 let layer = CALayer()
-layer.alpha = 0.5
+layer.opacity = 0.5
 ```
 
 <details>
@@ -93,10 +93,11 @@ layer.alpha = 0.5
 ---
 
 ```swift
-let layer = CALayer()
-window.layer.addSublayer(layer)
-CATransaction.flush()
-layer.alpha = 0.5
+let view = UIView(); window.addSubview(view)
+let layer = CALayer(); view.layer.addSublayer(layer)
+RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.00001))
+
+layer.opacity = 0.5
 ```
 
 <details>
@@ -107,11 +108,12 @@ layer.alpha = 0.5
 ---
 
 ```swift
-let layer = CALayer()
-window.layer.addSublayer(layer)
-CATransaction.flush()
+let view = UIView(); window.addSubview(view)
+let layer = CALayer(); view.layer.addSublayer(layer)
+RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.00001))
+
 UIView.animate(withDuration: 0.8, animations: {
-  layer.alpha = 0.5
+  layer.opacity = 0.5
 })
 ```
 
