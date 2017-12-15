@@ -19,7 +19,7 @@ When evaluating whether to use a main thread-based animation system or not, chec
 
 ## The MotionAnimator as a generalized render server animation API
 
-There are two primary ways to add animations to the render server: **explicitly**, using the CALayer `addAnimation:forKey:` APIs; and **implicitly**, using with the UIView `animateWithDuration:` APIs and by setting properties on standalone CALayer instances. There are a large number of differences between these two APIs and understanding their relative merits is an important part of harnessing iOS' render server.
+There are two primary ways to add animations to the render server: **explicitly**, with the CALayer `addAnimation:forKey:` APIs; and **implicitly**, with the UIView `animateWithDuration:` APIs and by setting properties on standalone CALayer instances. There are a large number of differences between these two APIs and understanding their relative merits is an important part of harnessing iOS' render server.
 
 The differences can be grouped into answers to the following questions:
 
