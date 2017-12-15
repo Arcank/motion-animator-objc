@@ -40,6 +40,8 @@ UIView.animate(withDuration: 0.8, animations: {
   Generates an animation with duration of 0.8.
 </details>
 
+---
+
 ```swift
 let view = UIView()
 UIView.animate(withDuration: 0.8, animations: {
@@ -51,6 +53,8 @@ UIView.animate(withDuration: 0.8, animations: {
   <summary>Click to see the answer</summary>
   Generates an animation with duration of 0.8.
 </details>
+
+---
 
 ```swift
 let view = UIView()
