@@ -7,7 +7,279 @@
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/MotionAnimator.svg)](https://cocoapods.org/pods/MotionAnimator)
 [![Platform](https://img.shields.io/cocoapods/p/MotionAnimator.svg)](http://cocoadocs.org/docsets/MotionAnimator)
 
+## Background on iOS animation systems
 
+Animation systems on iOS can be split in to two general categories: main thread-based and render server-based.
+
+Main thread-based animation systems include UIDynamics, Facebook's [POP](https://github.com/facebook/pop), or anything driven by a CADisplayLink. These animation systems tend to require that you offload as much processing time as possible to background threads, otherwise your animations may stutter; i.e. "*main thread jank*".
+
+There is only one render server-based animation system: Core Animation. The *render server* is an operating-system wide dedicated process for performing animations on iOS. Because it lives outside of any app's main thread, the render server is never subject to main thread jank.
+
+When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may as well reap the benefits of offloading animations from your app's main thread.
+
+## The MotionAnimator as a generalized render server animation API
+
+There are two primary ways to add animations to the render server: **explicitly**, using the CALayer `addAnimation:forKey:` APIs; and **implicitly**, using with the UIView `animateWithDuration:` APIs and by setting properties on standalone CALayer instances. There are a large number of differences between these two APIs and understanding their relative merits is an important part of harnessing iOS' render server.
+
+The differences can be grouped into answers to the following questions:
+
+1. What properties can I explicitly animate?
+2. What properties can I implicitly animate?
+3. Are animations additive by default? In other words, can animations change their destination mid-way through the animation while still preserving momentum?
+
+We'll answer each of these questions using a chart that compares the four different mechanisms for animating views and layers on iOS:
+
+1. CALayer explicit `addAnimation:forKey:`
+2. UIView implicit `animateWithDuration:`
+3. CALayer implicit `layer.<property> = <someNewValue>`
+4. MotionAnimator
+
+### What properties can I explicitly animate?
+
+The only explicit animation API is CALayer's `addAnimation:forKey:`. Everything ultimately funnels down to this method whether you're animating a UIView or a CALayer.
+
+> For a full list of animatable CALayer properties, see the [Apple documentation](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CoreAnimation_guide/AnimatableProperties/AnimatableProperties.html).
+
+Any property that can be animated explicitly with CALayer's `addAnimation:forKey:` can also be animated explicitly using the MotionAnimator's `animateWithTraits:` APIs:
+
+```swift
+let animation = CABasicAnimation(keyPath: "cornerRadius")
+animation.fromValue = 0
+animation.toValue = 10
+animation.duration = 0.5
+view.layer.add(animation, forKey: animation.keyPath)
+
+// ^ is equivalent to:
+
+let animator = MotionAnimator()
+let traits = MDMAnimationTraits(duration: 0.5)
+animator.animate(with: traits,
+                 between: [0, 10],
+                 layer: view.layer,
+                 keyPath: .cornerRadius)
+
+// Note that keyPath is an enum string type, so you can also pass arbitrary key paths
+// like so:
+animator.animate(with: traits,
+                 between: [0, 10],
+                 layer: view.layer,
+                 keyPath: AnimatableKeyPath(rawValue: "customKeyPath"))
+```
+
+### What properties can I implicitly animate?
+
+UIKit and Core Animation have different rules about when and how a property can be implicitly animated.
+
+UIView properties generate implicit animations **only** when they are changed within an `animateWithDuration:` animation block.
+
+CALayer properties generate implicit animations **only** when they are changed under the following conditions:
+
+1. The CALayer is backing a UIView, the property is a supported UIKit animatable property (this is not documented anywhere), and the properties are being changed within an `animateWithDuration:` block.
+2. The CALayer is **not** backing a UIView (a "standalone layer"), the layer has been around for at least one CATransaction flush (either by invoking `CATransaction.flush()` or because the run loop turned), and the property is changed.
+
+This behavior can be somewhat difficult to reason through, most notably when trying to animate CALayer properties using the UIView `animateWithDuration:` APIs. For example, CALayer's cornerRadius was not animatable using `animateWithDuration:` up until iOS 11, but MotionAnimator supports imlicitly animating this property back to iOS 8.
+
+```swift
+// This doesn't work until iOS 11.
+UIView.animate(withDuration: 0.8, animations: {
+  view.layer.borderWidth = 10
+}, completion: nil)
+
+// This works all the way back to iOS 8.
+MotionAnimator.animate(withDuration: 0.8, animations: {
+  view.layer.borderWidth = 10
+}, completion: nil)
+```
+
+The MotionAnimator provides a more consistent implicit animation API with a well-defined set of supported properties.
+
+#### When will changing a property cause an implicit animation?
+
+The following charts describe when changing a property on a given object will cause an implicit animation to be generated.
+
+| `UIView`               | inside animation block | outside animation block | inside MotionAnimator animation block |
+|:-----------------------|:-----------------------|:------------------------|:--------------------------------------|
+| `alpha`                | ✓                      |                         | ✓                                     |
+| `backgroundColor`      | ✓                      |                         | ✓                                     |
+| `bounds`               | ✓                      |                         | ✓                                     |
+| `bounds.size.height`   | ✓                      |                         | ✓                                     |
+| `bounds.size.width`    | ✓                      |                         | ✓                                     |
+| `center`               | ✓                      |                         | ✓                                     |
+| `center.x`             | ✓                      |                         | ✓                                     |
+| `center.y`             | ✓                      |                         | ✓                                     |
+| `transform`            | ✓                      |                         | ✓                                     |
+| `transform.rotation.z` | ✓                      |                         | ✓                                     |
+| `transform.scale`      | ✓                      |                         | ✓                                     |
+
+Example code:
+
+```
+let view = UIView()
+
+// inside animation block
+UIView.animate(withDuration: 0.8, animations: {
+  view.alpha = 0.5
+})
+
+// outside animation block
+view.alpha = 0.5
+
+// inside MotionAnimator animation block
+MotionAnimator.animate(withDuration: 0.8, animations: {
+  view.alpha = 0.5
+})
+```
+
+---
+
+| Backing `CAlayer`              | inside animation block | outside animation block | inside MotionAnimator animation block |
+|:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
+| `anchorPoint`                  | ✓                      |                         | ✓                                     |
+| `backgroundColor`              |                        |                         | ✓                                     |
+| `bounds`                       | ✓                      |                         | ✓                                     |
+| `borderWidth`                  |                        |                         | ✓                                     |
+| `borderColor`                  |                        |                         | ✓                                     |
+| `cornerRadius`                 | ✓ (starting in iOS 11) |                         | ✓                                     |
+| `bounds.size.height`           | ✓                      |                         | ✓                                     |
+| `opacity`                      | ✓                      |                         | ✓                                     |
+| `position`                     | ✓                      |                         | ✓                                     |
+| `transform.rotation.z`         | ✓                      |                         | ✓                                     |
+| `transform.scale`              | ✓                      |                         | ✓                                     |
+| `shadowColor`                  |                        |                         | ✓                                     |
+| `shadowOffset`                 |                        |                         | ✓                                     |
+| `shadowOpacity`                |                        |                         | ✓                                     |
+| `shadowRadius`                 |                        |                         | ✓                                     |
+| `strokeStart`                  |                        |                         | ✓                                     |
+| `strokeEnd`                    |                        |                         | ✓                                     |
+| `transform`                    | ✓                      |                         | ✓                                     |
+| `bounds.size.width`            | ✓                      |                         | ✓                                     |
+| `position.x`                   | ✓                      |                         | ✓                                     |
+| `position.y`                   | ✓                      |                         | ✓                                     |
+| `zPosition`                    |                        |                         | ✓                                     |
+
+Example code:
+
+```
+let view = UIView()
+
+// inside animation block
+UIView.animate(withDuration: 0.8, animations: {
+  view.layer.opacity = 0.5 // Note: will animate with the CATransaction duration of 0.25 rather than 0.8.
+})
+
+// outside animation block
+view.layer.opacity = 0.5
+
+// inside MotionAnimator animation block
+MotionAnimator.animate(withDuration: 0.8, animations: {
+  view.layer.opacity = 0.5 // Note: will animate with the provided duration of 0.8
+})
+```
+
+---
+
+| Unflushed standalone `CAlayer` | inside animation block | outside animation block | inside MotionAnimator animation block |
+|:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
+| `anchorPoint`                  |                        |                         | ✓                                     |
+| `backgroundColor`              |                        |                         | ✓                                     |
+| `bounds`                       |                        |                         | ✓                                     |
+| `borderWidth`                  |                        |                         | ✓                                     |
+| `borderColor`                  |                        |                         | ✓                                     |
+| `cornerRadius`                 |                        |                         | ✓                                     |
+| `bounds.size.height`           |                        |                         | ✓                                     |
+| `opacity`                      |                        |                         | ✓                                     |
+| `position`                     |                        |                         | ✓                                     |
+| `transform.rotation.z`         |                        |                         | ✓                                     |
+| `transform.scale`              |                        |                         | ✓                                     |
+| `shadowColor`                  |                        |                         | ✓                                     |
+| `shadowOffset`                 |                        |                         | ✓                                     |
+| `shadowOpacity`                |                        |                         | ✓                                     |
+| `shadowRadius`                 |                        |                         | ✓                                     |
+| `strokeStart`                  |                        |                         | ✓                                     |
+| `strokeEnd`                    |                        |                         | ✓                                     |
+| `transform`                    |                        |                         | ✓                                     |
+| `bounds.size.width`            |                        |                         | ✓                                     |
+| `position.x`                   |                        |                         | ✓                                     |
+| `position.y`                   |                        |                         | ✓                                     |
+| `zPosition`                    |                        |                         | ✓                                     |
+
+Example code:
+
+```
+let layer = CALayer()
+
+// inside animation block
+UIView.animate(withDuration: 0.8, animations: {
+  layer.opacity = 0.5
+})
+
+// outside animation block
+layer.opacity = 0.5
+
+// inside MotionAnimator animation block
+MotionAnimator.animate(withDuration: 0.8, animations: {
+  layer.opacity = 0.5
+})
+```
+
+---
+
+| Flushed standalone `CAlayer`   | inside animation block | outside animation block | inside MotionAnimator animation block |
+|:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
+| `anchorPoint`                  | ✓                      | ✓                       | ✓                                     |
+| `backgroundColor`              |                        |                         | ✓                                     |
+| `bounds`                       | ✓                      | ✓                       | ✓                                     |
+| `borderWidth`                  | ✓                      | ✓                       | ✓                                     |
+| `borderColor`                  | ✓                      | ✓                       | ✓                                     |
+| `cornerRadius`                 | ✓                      | ✓                       | ✓                                     |
+| `bounds.size.height`           | ✓                      | ✓                       | ✓                                     |
+| `opacity`                      | ✓                      | ✓                       | ✓                                     |
+| `position`                     | ✓                      | ✓                       | ✓                                     |
+| `transform.rotation.z`         | ✓                      | ✓                       | ✓                                     |
+| `transform.scale`              | ✓                      | ✓                       | ✓                                     |
+| `shadowColor`                  | ✓                      | ✓                       | ✓                                     |
+| `shadowOffset`                 | ✓                      | ✓                       | ✓                                     |
+| `shadowOpacity`                | ✓                      | ✓                       | ✓                                     |
+| `shadowRadius`                 | ✓                      | ✓                       | ✓                                     |
+| `strokeStart`                  | ✓                      | ✓                       | ✓                                     |
+| `strokeEnd`                    | ✓                      | ✓                       | ✓                                     |
+| `transform`                    | ✓                      | ✓                       | ✓                                     |
+| `bounds.size.width`            | ✓                      | ✓                       | ✓                                     |
+| `position.x`                   | ✓                      | ✓                       | ✓                                     |
+| `position.y`                   | ✓                      | ✓                       | ✓                                     |
+| `zPosition`                    | ✓                      | ✓                       | ✓                                     |
+
+Example code:
+
+```
+let layer = CALayer()
+
+// It's usually unnecessary to flush the transaction, unless you want to be able to implicitly
+// animate it without using a MotionAnimator.
+CATransaction.flush()
+
+// inside animation block
+UIView.animate(withDuration: 0.8, animations: {
+  layer.opacity = 0.5 // Note: will animate with the CATransaction duration of 0.25 rather than 0.8.
+})
+
+// outside animation block
+layer.opacity = 0.5
+
+// inside MotionAnimator animation block
+MotionAnimator.animate(withDuration: 0.8, animations: {
+  layer.opacity = 0.5 // Note: will animate with the provided duration of 0.8
+})
+```
+
+## WWDC material on Core Animation
+
+- [Building Animation Driven Interfaces](http://asciiwwdc.com/2010/sessions/123)
+- [Core Animation in Practice, Part 1](http://asciiwwdc.com/2010/sessions/424)
+- [Core Animation in Practice, Part 2](http://asciiwwdc.com/2010/sessions/425)
+- [Building Interruptible and Responsive Interactions](http://asciiwwdc.com/2014/sessions/236)
+- [Advanced Graphics and Animations for iOS Apps](http://asciiwwdc.com/2014/sessions/419)
+- [Advances in UIKit Animations and Transitions](http://asciiwwdc.com/2016/sessions/216)
 
 ## Example apps/unit tests
 
