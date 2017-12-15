@@ -134,6 +134,8 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 #### Backing CALayer
 
+Every UIView has a backing CALayer.
+
 ```swift
 let view = UIView()
 
