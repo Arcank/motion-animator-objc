@@ -11,9 +11,9 @@
 
 Animation systems on iOS can be split into two general categories: main thread-based and Core Animation.
 
-Main thread-based animation systems include UIDynamics, Facebook's [POP](https://github.com/facebook/pop), or anything driven by a CADisplayLink. These animation systems share CPU time with your app's main thread, meaning they're sharing resources with UIKit, text rendering, and any other main-thread bound processes. This also means the animations are subject to *main thread jank*, in other words: dropped frames of animation or "stuttering".
+**Main thread**-based animation systems include UIDynamics, Facebook's [POP](https://github.com/facebook/pop), or anything driven by a CADisplayLink. These animation systems share CPU time with your app's main thread, meaning they're sharing resources with UIKit, text rendering, and any other main-thread bound processes. This also means the animations are subject to *main thread jank*, in other words: dropped frames of animation or "stuttering".
 
-Core Animation makes use of the *render server*, an operating system-wide process for animations on iOS. Because it's independent of any app's main thread, the render server is never subject to main thread jank.
+**Core Animation** makes use of the *render server*, an operating system-wide process for animations on iOS. Because it's independent of any app's main thread, the render server is never subject to main thread jank.
 
 When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may be able to offload the animations from your app's main thread.
 
