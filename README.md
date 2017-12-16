@@ -26,7 +26,9 @@ There are two primary ways to animate on iOS:
 
 A subset of UIView's and CALayer's public APIs is animatable by Core Animation. Of these animatable properties, some are implicitly animatable while some are not. To complicate matters even further: whether a property is animatable or not depends on the context within which it's being animated.
 
-For example, try to guess which of the following snippets will generate an animation and what the generated animation's duration will be:
+For example, try to guess which of the following snippets will generate an animation and, if they do, what the generated animation's duration will be:
+
+> Imagine that each code snippet is a standalone unit test (because [they are](tests/unit/HeadlessLayerImplicitAnimationTests.swift)!).
 
 ```swift
 let view = UIView()
