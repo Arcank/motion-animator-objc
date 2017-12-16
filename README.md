@@ -251,7 +251,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 
 | Key Path                       | inside animation block | outside animation block | inside MotionAnimator animation block |
 |:-------------------------------|:-----------------------|:------------------------|:--------------------------------------|
-| `anchorPoint`                  | ✓                      |                         | ✓                                     |
+| `anchorPoint`                  | ✓ (starting in iOS 11) |                         | ✓                                     |
 | `backgroundColor`              |                        |                         | ✓                                     |
 | `bounds`                       | ✓                      |                         | ✓                                     |
 | `borderWidth`                  |                        |                         | ✓                                     |
