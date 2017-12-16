@@ -21,7 +21,7 @@ When evaluating whether to use a main thread-based animation system or not, chec
 
 There are two primary ways to animate on iOS:
 
-1. **implicitly**, with the UIView `animateWithDuration:` APIs or by setting properties on standalone CALayer instances, and
+1. **implicitly**, with the UIView `animateWithDuration:` APIs, or by setting properties on standalone CALayer instances, and
 2. **explicitly**, with the CALayer `addAnimation:forKey:` APIs.
 
 A subset of UIView's and CALayer's public APIs is animatable by Core Animation. Of these animatable properties, some are implicitly animatable while some are not. To complicate matters even further: whether a property is animatable or not depends on the context within which it's being animated.
