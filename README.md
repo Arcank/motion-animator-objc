@@ -19,7 +19,7 @@ When evaluating whether to use a main thread-based animation system or not, chec
 
 ## Animating view and layer properties
 
-There are two primary ways to animate on iOS:
+There are two primary ways to animate with Core Animation on iOS:
 
 1. **implicitly**, with the UIView `animateWithDuration:` APIs, or by setting properties on standalone CALayer instances, and
 2. **explicitly**, with the CALayer `addAnimation:forKey:` APIs.
