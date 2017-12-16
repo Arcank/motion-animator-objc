@@ -88,7 +88,7 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
   func testDoesImplicitlyAnimate() {
     let layer = CALayer()
     window.layer.addSublayer(layer)
-    CATransaction.flush()
+    RunLoop.main.run(mode: .defaultRunLoopMode, before: .distantFuture)
 
     layer.opacity = 0.5
 

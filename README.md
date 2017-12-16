@@ -9,22 +9,22 @@
 
 ## Background on iOS animation systems
 
-Animation systems on iOS can be split in to two general categories: main thread-based and render server-based.
+Animation systems on iOS can be split in to two general categories: main thread-based and Core Animation.
 
 Main thread-based animation systems include UIDynamics, Facebook's [POP](https://github.com/facebook/pop), or anything driven by a CADisplayLink. These animation systems share CPU time with your app's main thread, meaning they're sharing resources with UIKit, text rendering, and any other main-thread bound processes. This also means the animations are subject to *main thread jank*, in other words: dropped frames of animation or "stuttering".
 
-There is one render server-based animation system: Core Animation. The *render server* is an operating system-wide process for animations on iOS. Because it's independent of any app's main thread, the render server is never subject to main thread jank.
+Core Animation makes use of the *render server*, an operating system-wide process for animations on iOS. Because it's independent of any app's main thread, the render server is never subject to main thread jank.
 
 When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may be able to offload the animations from your app's main thread.
 
-## Implicit vs explicit animations
+## Implicit and explicit animations
 
 There are two primary ways to animate on iOS:
 
-1. **explicitly**, with the CALayer `addAnimation:forKey:` APIs; and
-2. **implicitly**, with the UIView `animateWithDuration:` APIs or by setting properties on standalone CALayer instances.
+1. **implicitly**, with the UIView `animateWithDuration:` APIs or by setting properties on standalone CALayer instances, and
+2. **explicitly**, with the CALayer `addAnimation:forKey:` APIs.
 
-Not every UIView or CALayer property is animatable by Core Animation. To complicate matters even further: whether a property is animatable or not depends on the context within which it's being animated.
+A subset of UIView's and CALayer's public APIs is animatable by Core Animation. Of these animatable properties, some are implicitly animatable while some are not. To complicate matters even further: whether a property is animatable or not depends on the context within which it's being animated.
 
 For example, try to guess which of the following snippets will generate an animation and what the generated animation's duration will be:
 
@@ -93,9 +93,12 @@ layer.opacity = 0.5
 ---
 
 ```swift
-let view = UIView(); window.addSubview(view)
-let layer = CALayer(); view.layer.addSublayer(layer)
-RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.00001))
+let view = UIView()
+window.addSubview(view)
+let layer = CALayer()
+view.layer.addSublayer(layer)
+// Let one run loop happen, allowing the layer to become hosted.
+RunLoop.main.run(mode: .defaultRunLoopMode, before: .distantFuture)
 
 layer.opacity = 0.5
 ```
@@ -108,9 +111,12 @@ layer.opacity = 0.5
 ---
 
 ```swift
-let view = UIView(); window.addSubview(view)
-let layer = CALayer(); view.layer.addSublayer(layer)
-RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.00001))
+let view = UIView()
+window.addSubview(view)
+let layer = CALayer()
+view.layer.addSublayer(layer)
+// Let one run loop happen
+RunLoop.main.run(mode: .defaultRunLoopMode, before: .distantFuture)
 
 UIView.animate(withDuration: 0.8, animations: {
   layer.opacity = 0.5
@@ -368,7 +374,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 | `position.y`                   | ✓                      | ✓                       | ✓                                     |
 | `zPosition`                    | ✓                      | ✓                       | ✓                                     |
 
-## WWDC material on Core Animation
+## Further reading on Core Animation
 
 - [Building Animation Driven Interfaces](http://asciiwwdc.com/2010/sessions/123)
 - [Core Animation in Practice, Part 1](http://asciiwwdc.com/2010/sessions/424)
@@ -376,6 +382,8 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 - [Building Interruptible and Responsive Interactions](http://asciiwwdc.com/2014/sessions/236)
 - [Advanced Graphics and Animations for iOS Apps](http://asciiwwdc.com/2014/sessions/419)
 - [Advances in UIKit Animations and Transitions](http://asciiwwdc.com/2016/sessions/216)
+- [Animating Layer Content](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CoreAnimation_guide/CreatingBasicAnimations/CreatingBasicAnimations.html)
+- [Advanced Animation Tricks](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CoreAnimation_guide/AdvancedAnimationTricks/AdvancedAnimationTricks.html)
 
 ## Example apps/unit tests
 
