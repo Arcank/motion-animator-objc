@@ -17,7 +17,7 @@ Core Animation makes use of the *render server*, an operating system-wide proces
 
 When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may be able to offload the animations from your app's main thread.
 
-## Implicit and explicit animations
+## Animating view and layer properties
 
 There are two primary ways to animate on iOS:
 
