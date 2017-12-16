@@ -48,9 +48,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
       view.alpha = 0.5
     }
 
-    let animation = view.layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration() + 0.1)
+    XCTAssert(view.layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = view.layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration() + 0.1)
+    }
   }
 
   func testViewLayerDoesImplicitlyAnimateInUIViewAnimateBlock() {
@@ -59,9 +61,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
       view.layer.opacity = 0.5
     }
 
-    let animation = view.layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration() + 0.1)
+    XCTAssert(view.layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = view.layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration() + 0.1)
+    }
   }
 
   func testViewDoesNotImplicitlyAnimate() {
@@ -92,9 +96,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
 
     layer.opacity = 0.5
 
-    let animation = layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    XCTAssert(layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    }
   }
 
   func testImplicitlyAnimatesInUIViewAnimateBlockWithCATransactionDuration() {
@@ -105,9 +111,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
       layer.opacity = 0.5
     })
 
-    let animation = layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    XCTAssert(layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    }
   }
 
   func testDoesNotImplicitlyAnimateInCATransactionWithActionsDisabled() {
@@ -132,9 +140,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
       layer.opacity = 0.5
     }
 
-    let animation = layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    XCTAssert(layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    }
   }
 
   // Verifies the somewhat counter-intuitive fact that CATransaction's animation duration always
@@ -149,9 +159,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
       layer.opacity = 0.5
     }
 
-    let animation = layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    XCTAssert(layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    }
   }
 
   func testDoesImplicitlyAnimateInUIViewAnimateBlock() {
@@ -163,9 +175,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
       layer.opacity = 0.5
     }
 
-    let animation = layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    XCTAssert(layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    }
   }
 
   func testDoesImplicitlyAnimateInUIViewAnimateBlockWhenLayerIsASublayerOfAView() {
@@ -179,9 +193,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
       layer.opacity = 0.5
     }
 
-    let animation = layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    XCTAssert(layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    }
   }
 
   func testDoesImplicitlyAnimateWhenLayerIsASublayerOfAView() {
@@ -193,9 +209,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
 
     layer.opacity = 0.5
 
-    let animation = layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    XCTAssert(layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, CATransaction.animationDuration())
+    }
   }
 
   func testDoesNotImplicitlyAnimateInUIViewAnimateBlockWithActionsDisabledInside() {
@@ -228,7 +246,7 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
     XCTAssertNil(layer.animationKeys())
   }
 
-  func testAnimatorTimingTakesPrecedenceOverCATransactionTiming() {
+  func testAnimationTraitsTakesPrecedenceOverCATransactionTiming() {
     let layer = CALayer()
     window.layer.addSublayer(layer)
     CATransaction.flush()
@@ -245,9 +263,11 @@ class HeadlessLayerImplicitAnimationTests: XCTestCase {
     }
     CATransaction.commit()
 
-    let animation = layer.animation(forKey: "opacity") as! CABasicAnimation
-    XCTAssertEqual(animation.keyPath, "opacity")
-    XCTAssertEqual(animation.duration, traits.duration)
+    XCTAssert(layer.animation(forKey: "opacity") is CABasicAnimation)
+    if let animation = layer.animation(forKey: "opacity") as? CABasicAnimation {
+      XCTAssertEqual(animation.keyPath, "opacity")
+      XCTAssertEqual(animation.duration, traits.duration)
+    }
   }
 
   // MARK: Deprecated tests.
