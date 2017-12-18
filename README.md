@@ -14,7 +14,7 @@ There are two primary ways to animate with Core Animation on iOS:
 
 A subset of UIView's and CALayer's public APIs is animatable by Core Animation. Of these animatable properties, some are implicitly animatable while some are not. To complicate matters further: whether a property is animatable or not depends on the context within which it's being animated.
 
-`MotionAnimator` provides an API that behaves consistently across both implicit and explicit animations:
+With `MotionAnimator`, you gain the following benefits over using UIKit or Core Animation alone:
 
 1. Animatable properties are [well-defined, documented, and tested](src/MDMAnimatableKeyPaths.h).
 3. Supported properties are always implicitly animatable, regardless of whether the layers are hosted or not.
@@ -23,9 +23,9 @@ A subset of UIView's and CALayer's public APIs is animatable by Core Animation. 
 
 | Feature | UIKit | Core Animation | MotionAnimator |
 |:--------|:------|:---------------|:---------------|
-| Additive animations | Enabled on implicit animations of select properties. | Must be enabled for explicit animations. | Enabled on both implicit and explicit animations of select properties. |
-| Spring velocity coordinate space | Relative to displacement. | Relative to displacement. | Relative to property's coordinate space. |
-| Implicit animations | Supports a subset of animatable CALayer properties. | Behavior changes depending on whether the layer is hosted or not. | All documented properties are implicitly animatable, regardless of whether the layer is hosted or not. |
+| **Additive animations** | Enabled on implicit animations of select properties. | Must be enabled for explicit animations. | Enabled on both implicit and explicit animations of select properties. |
+| **Spring velocity coordinate space** | Relative to displacement. | Relative to displacement. | Relative to property's coordinate space. |
+| **Implicit animations** | Supports a subset of animatable CALayer properties. | Behavior changes depending on whether the layer is hosted or not. | All documented properties are implicitly animatable, regardless of whether the layer is hosted or not. |
 
 ### A small quiz
 
@@ -59,6 +59,20 @@ UIView.animate(withDuration: 0.8, animations: {
 <details>
   <summary>Click to see the answer</summary>
   Generates an animation with duration of 0.8.
+</details>
+
+---
+
+```swift
+let view = UIView()
+UIView.animate(withDuration: 0.8, animations: {
+  view.layer.cornerRadius = 3
+})
+```
+
+<details>
+  <summary>Click to see the answer</summary>
+  On iOS 11 and up, generates an animation with duration of 0.8. Older operating systems will not generate an animation.
 </details>
 
 ---
