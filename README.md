@@ -21,7 +21,15 @@ A subset of UIView's and CALayer's public APIs is animatable by Core Animation. 
 3. Additive animations are supported for both implicit and explicit APIs.
 4. Spring velocity is calculated in the property's coordinate space, rather than in terms of normalized displacement.
 
+| Feature | UIKit | Core Animation | MotionAnimator |
+|:--------|:------|:---------------|:---------------|
+| Additive animations | Enabled on implicit animations of select properties. | Must be enabled for explicit animations. | Enabled on both implicit and explicit animations of select properties. |
+| Spring velocity coordinate space | Relative to displacement. | Relative to displacement. | Relative to property's coordinate space. |
+| Implicit animations | Supports a subset of animatable CALayer properties. | Behavior changes depending on whether the layer is hosted or not. | All documented properties are implicitly animatable, regardless of whether the layer is hosted or not. |
+
 ### A small quiz
+
+The following quiz helps illustrate that the UIKit and Core Animation APIs can often lead to unintuitive behavior.
 
 Try to guess which of the following snippets will generate an animation and, if they do, what the generated animation's duration will be:
 
