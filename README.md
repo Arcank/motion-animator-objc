@@ -12,9 +12,18 @@ There are two primary ways to animate with Core Animation on iOS:
 1. **implicitly**, with the UIView `animateWithDuration:` APIs, or by setting properties on unhosted CALayer instances, and
 2. **explicitly**, with the CALayer `addAnimation:forKey:` APIs.
 
-A subset of UIView's and CALayer's public APIs is animatable by Core Animation. Of these animatable properties, some are implicitly animatable while some are not. To complicate matters even further: whether a property is animatable or not depends on the context within which it's being animated.
+A subset of UIView's and CALayer's public APIs is animatable by Core Animation. Of these animatable properties, some are implicitly animatable while some are not. To complicate matters further: whether a property is animatable or not depends on the context within which it's being animated.
 
-For example, try to guess which of the following snippets will generate an animation and, if they do, what the generated animation's duration will be:
+`MotionAnimator` provides an API that behaves consistently across both implicit and explicit animations:
+
+1. Animatable properties are [well-defined, documented, and tested](src/MDMAnimatableKeyPaths.h).
+3. Supported properties are always implicitly animatable, regardless of whether the layers are hosted or not.
+3. Additive animations are supported for both implicit and explicit APIs.
+4. Spring velocity is calculated in the property's coordinate space, rather than in terms of normalized displacement.
+
+### A small quiz
+
+Try to guess which of the following snippets will generate an animation and, if they do, what the generated animation's duration will be:
 
 > Imagine that each code snippet is a standalone unit test (because [they are](tests/unit/HeadlessLayerImplicitAnimationTests.swift)!).
 
