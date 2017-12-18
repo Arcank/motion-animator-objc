@@ -7,21 +7,9 @@
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/MotionAnimator.svg)](https://cocoapods.org/pods/MotionAnimator)
 [![Platform](https://img.shields.io/cocoapods/p/MotionAnimator.svg)](http://cocoadocs.org/docsets/MotionAnimator)
 
-## Background on iOS animation systems
-
-Animation systems on iOS can be split into two general categories: main thread-based and Core Animation.
-
-**Main thread**-based animation systems include UIDynamics, Facebook's [POP](https://github.com/facebook/pop), or anything driven by a CADisplayLink. These animation systems share CPU time with your app's main thread, meaning they're sharing resources with UIKit, text rendering, and any other main-thread bound processes. This also means the animations are subject to *main thread jank*, in other words: dropped frames of animation or "stuttering".
-
-**Core Animation** makes use of the *render server*, an operating system-wide process for animations on iOS. This independence from an app's process allows the render server to avoid main thread jank altogether.
-
-When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may be able to offload the animations from your app's main thread.
-
-## Animating view and layer properties
-
 There are two primary ways to animate with Core Animation on iOS:
 
-1. **implicitly**, with the UIView `animateWithDuration:` APIs, or by setting properties on standalone CALayer instances, and
+1. **implicitly**, with the UIView `animateWithDuration:` APIs, or by setting properties on unhosted CALayer instances, and
 2. **explicitly**, with the CALayer `addAnimation:forKey:` APIs.
 
 A subset of UIView's and CALayer's public APIs is animatable by Core Animation. Of these animatable properties, some are implicitly animatable while some are not. To complicate matters even further: whether a property is animatable or not depends on the context within which it's being animated.
@@ -130,6 +118,16 @@ UIView.animate(withDuration: 0.8, animations: {
   Generates an animation with duration of 0.25.
 </details>
 
+## Background on iOS animation systems
+
+Animation systems on iOS can be split into two general categories: main thread-based and Core Animation.
+
+**Main thread**-based animation systems include UIDynamics, Facebook's [POP](https://github.com/facebook/pop), or anything driven by a CADisplayLink. These animation systems share CPU time with your app's main thread, meaning they're sharing resources with UIKit, text rendering, and any other main-thread bound processes. This also means the animations are subject to *main thread jank*, in other words: dropped frames of animation or "stuttering".
+
+**Core Animation** makes use of the *render server*, an operating system-wide process for animations on iOS. This independence from an app's process allows the render server to avoid main thread jank altogether.
+
+When evaluating whether to use a main thread-based animation system or not, check first whether the same animations can be performed in Core Animation instead. If they can, you may be able to offload the animations from your app's main thread by using Core Animation.
+
 ### What properties can I explicitly animate?
 
 The only explicit animation API is CALayer's `addAnimation:forKey:`. Everything ultimately funnels down to this method whether you're animating a UIView or a CALayer.
@@ -173,7 +171,7 @@ UIView properties generate implicit animations **only** when they are changed wi
 CALayer properties generate implicit animations **only** when they are changed under either of the following conditions:
 
 1. if the CALayer is backing a UIView, the property is a supported UIKit animatable property (this is not documented anywhere), and the property is changed within an `animateWithDuration:` block, or
-2. if the CALayer is **not** backing a UIView (a "standalone layer"), the layer has been around for at least one CATransaction flush (either by invoking `CATransaction.flush()` or because the run loop turned), and the property is changed.
+2. if the CALayer is **not** backing a UIView (an "unhosted layer"), the layer has been around for at least one CATransaction flush (either by invoking `CATransaction.flush()` or because the run loop turned), and the property is changed.
 
 This behavior can be somewhat difficult to reason through, most notably when trying to animate CALayer properties using the UIView `animateWithDuration:` APIs. For example, CALayer's cornerRadius was not animatable using `animateWithDuration:` up until iOS 11, and many other CALayer properties are still not implicitly animatable.
 
@@ -274,7 +272,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 | `position.y`                   | ✓                      |                         | ✓                                     |
 | `zPosition`                    |                        |                         | ✓                                     |
 
-#### Unflushed standalone CALayer
+#### Unflushed, unhosted CALayer
 
 CALayers are unflushed until the next `CATransaction.flush()` invocation, which can happen either directly or at the end of the current run loop.
 
@@ -320,7 +318,7 @@ MotionAnimator.animate(withDuration: 0.8, animations: {
 | `position.y`                   |                        |                         | ✓                                     |
 | `zPosition`                    |                        |                         | ✓                                     |
 
-#### Flushed standalone CALayer
+#### Flushed, unhosted CALayer
 
 ```swift
 let layer = CALayer()
